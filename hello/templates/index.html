@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Departures</title>
+</head>
+<body>
+  <h1>Eastern Pkwy</h1>
+  <p>To Manhattan</p>
+  <ul>
+    {% for dept in epkwy %}
+      <li>{{dept}}</li>
+    {% endfor %}
+  </ul>
+  <h1>7th Av</h1>
+  <p>To Manhattan</p>
+  <ul>
+    {% for dept in seventh %}
+      <li>{{dept}}</li>
+    {% endfor %}
+  </ul>
+  <h1>145th-StNick</h1>
+  <p>Downtown</p>
+  <ul>
+    {% for dept in ad145 %}
+      <li>{{dept}}</li>
+    {% endfor %}
+  </ul>
+  <h1>145th-Bwy</h1>
+  <p>Downtown</p>
+  </ul>
+    {% for dept in one145 %}
+      <li>{{dept}}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
