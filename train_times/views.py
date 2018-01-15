@@ -2,8 +2,8 @@ import urllib.request
 import datetime, os
 from django.shortcuts import render
 from django.http import HttpResponse
-from hello.gtfs_realtime_pb2 import *
-from hello.nyct_subway_pb2 import *
+from train_times.gtfs_realtime_pb2 import *
+from train_times.nyct_subway_pb2 import *
 
 from .models import Greeting
 

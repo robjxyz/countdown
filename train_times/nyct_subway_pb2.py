@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 #import gtfs_realtime_pb2 as gtfs__realtime__pb2
-import hello.gtfs_realtime_pb2 as gtfs__realtime__pb2
+import train_times.gtfs_realtime_pb2 as gtfs__realtime__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='nyct-subway.proto',
