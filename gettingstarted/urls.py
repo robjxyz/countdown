@@ -11,7 +11,11 @@ import hello.views
 # url(r'^blog/', include('blog.urls')),
 
 urlpatterns = [
-    url(r'^$', hello.views.index, name='index'),
-    url(r'^db', hello.views.db, name='db'),
-    path('admin/', admin.site.urls),
+    path('', hello.views.index, name='index'),
+    path('<stop_id>/', hello.views.one_stop_with_id, name='one_stop_with_id'),
 ]
+# urlpatterns = [
+#     url(r'^$', hello.views.index, name='index'),
+#     url(r'^db', hello.views.db, name='db'),
+#     path('admin/', admin.site.urls),
+# ]

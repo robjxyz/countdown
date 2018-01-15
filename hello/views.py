@@ -84,8 +84,8 @@ def index(request):
     
     return render(request, 'index.html',context)
 
-def one_stop(request):
-    return render(request, 'one_stop.html')
+def one_stop_with_id(request, stop_id):
+    return render(request, 'one_stop.html', {'stop_id': stop_id})
 
 def db(request):
 
