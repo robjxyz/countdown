@@ -1,8 +1,3 @@
-#import subLib
-
-#for stop in subLib.nyctStops():
-#    print("'{1}':'{0}',".format(stop.name, stop.stop_id))
-
 db = {
   '101':'Van Cortlandt Park - 242 St',
   '103':'238 St',
