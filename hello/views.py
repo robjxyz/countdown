@@ -7,15 +7,15 @@ from hello.nyct_subway_pb2 import *
 
 from .models import Greeting
 
-NYCT-API = os.environ['NYCT-API']
+NYCTAPI = os.environ['NYCTAPI']
 
 # Create your views here.
 def index(request):
     feed = FeedMessage()
-    gtfs_raw_Adiv = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCT-API+"&feed_id=1").read()
-    gtfs_raw_NQRW = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCT-API+"&feed_id=16").read()
-    gtfs_raw_ACE = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCT-API+"&feed_id=26").read()
-    gtfs_raw_BDFM = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCT-API+"&feed_id=21").read()
+    gtfs_raw_Adiv = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=1").read()
+    gtfs_raw_NQRW = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=16").read()
+    gtfs_raw_ACE = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=26").read()
+    gtfs_raw_BDFM = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=21").read()
     feed.ParseFromString(gtfs_raw_Adiv)
     def prettyTime(t):
         if '-' in t: return '0 min'
@@ -84,6 +84,8 @@ def index(request):
     
     return render(request, 'index.html',context)
 
+def one_stop(request):
+    return render(request, 'one_stop.html')
 
 def db(request):
 
