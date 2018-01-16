@@ -472,8 +472,18 @@ db = {
   'S03':'Park Pl',
   'S04':'Botanic Garden'}
 
-def lookup(code):
-  code = str(code)
+import urllib.request
+import datetime, os
+from train_times.lib.gtfs_realtime_pb2 import *
+from train_times.lib.nyct_subway_pb2 import *
+NYCTAPI = os.environ['NYCTAPI']
+FEEDS = [1,2,11,16,21,26,31,36]
+
+def valid(stop_id):
+    return (stop_id[:-1] in db.keys()) and (stop_id[-1] in ['N', 'S'])
+
+def get_station_info(stop_id):
+  code = str(stop_id)
   try:
     if code[-1] in ('N','S'):
       return (db[code[:-1]],code[-1])
@@ -481,3 +491,55 @@ def lookup(code):
   except KeyError:
       return ('Invalid Stop Code:{0}'.format(code),'A')
 
+def has_stop_id(trip_update, stop_id):
+    for st in trip_update.stop_time_update:
+        if st.stop_id == stop_id:
+            return True
+    return False
+
+def has_trip_update(entity):
+    return len(str(entity.trip_update))>0
+
+def get_route_and_time(trip_update, stop_id):
+    route = trip_update.trip.route_id
+    for stu in trip_update.stop_time_update:
+        if stu.stop_id == stop_id:
+            time = stu.arrival.time
+            return {'route': route, 'time': time}
+
+def pretty_time(timestamp):
+    arrival_time = datetime.datetime.fromtimestamp(timestamp)
+    now = datetime.datetime.now()
+    time_till_arrival = arrival_time - now
+    seconds_till_arrival = time_till_arrival.seconds
+
+    # if the train has already left, seconds_till_arrival will loop backwards
+    # and therefore be a really big number (we chose 3 hours)
+    if seconds_till_arrival > 3*60*60:
+        return None
+
+    minutes_till_arrival = int(seconds_till_arrival/60)
+    return '{0} min'.format(minutes_till_arrival)
+
+
+def get_station_departures(stop_id):
+    station_departures = []
+
+    feed = FeedMessage()
+    for f in FEEDS:
+        gtfs_raw = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id="+str(f)).read()
+        feed.ParseFromString(gtfs_raw)
+
+        entities = feed.entity
+        non_vehicle_entities = list(filter(has_trip_update, entities))
+        trip_updates_passing_our_stop = list(filter(lambda tu: has_stop_id(tu, stop_id),
+                                                    [entity.trip_update for entity in non_vehicle_entities]))
+        if len(trip_updates_passing_our_stop) > 0:
+            train_routes_and_times = list(map(lambda tu: get_route_and_time(tu, stop_id), trip_updates_passing_our_stop))
+
+            for d in train_routes_and_times:
+                pt = pretty_time(d['time'])
+                if pt:
+                    station_departures.append({'route': d['route'], 'time': pt})
+
+    return station_departures

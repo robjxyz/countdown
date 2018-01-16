@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from train_times.lib.gtfs_realtime_pb2 import *
 from train_times.lib.nyct_subway_pb2 import *
+from train_times.lookup import get_station_info, get_station_departures, valid
 
 NYCTAPI = os.environ['NYCTAPI']
 
@@ -83,7 +84,13 @@ def index(request):
     return render(request, 'index.html',context)
 
 def one_stop_with_id(request, stop_id):
-    return render(request, 'one_stop.html', {'stop_id': stop_id})
+    if valid(stop_id):
+        stop_name, direction = get_station_info(stop_id)
+        departure_times = get_station_departures(stop_id)
+        print(departure_times)
+        return render(request, 'one_stop.html', {'stop_name': stop_name, 'direction': direction})
+    else:
+        return render(request, 'invalid_stop.html')
 
 def db(request):
 
