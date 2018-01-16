@@ -507,7 +507,7 @@ def get_route_and_time(trip_update, stop_id):
             time = stu.arrival.time
             return {'route': route, 'time': time}
 
-def pretty_time(timestamp):
+def minutes_from_timestamp(timestamp):
     arrival_time = datetime.datetime.fromtimestamp(timestamp)
     now = datetime.datetime.now()
     time_till_arrival = arrival_time - now
@@ -519,7 +519,7 @@ def pretty_time(timestamp):
         return None
 
     minutes_till_arrival = int(seconds_till_arrival/60)
-    return '{0} min'.format(minutes_till_arrival)
+    return minutes_till_arrival
 
 
 def get_station_departures(stop_id):
@@ -538,8 +538,8 @@ def get_station_departures(stop_id):
             train_routes_and_times = list(map(lambda tu: get_route_and_time(tu, stop_id), trip_updates_passing_our_stop))
 
             for d in train_routes_and_times:
-                pt = pretty_time(d['time'])
-                if pt:
-                    station_departures.append({'route': d['route'], 'time': pt})
+                minutes = minutes_from_timestamp(d['time'])
+                if minutes:
+                    station_departures.append({'route': d['route'], 'time': minutes})
 
     return station_departures

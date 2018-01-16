@@ -86,9 +86,10 @@ def index(request):
 def one_stop_with_id(request, stop_id):
     if valid(stop_id):
         stop_name, direction = get_station_info(stop_id)
-        departure_times = get_station_departures(stop_id)
-        print(departure_times)
-        return render(request, 'one_stop.html', {'stop_name': stop_name, 'direction': direction})
+        departure_times = sorted(get_station_departures(stop_id), key=lambda d: d['time'])
+        return render(request, 'one_stop.html', {'stop_name': stop_name,
+                                                'direction': direction,
+                                                'departure_times': departure_times})
     else:
         return render(request, 'invalid_stop.html')
 

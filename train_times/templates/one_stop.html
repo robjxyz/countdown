@@ -5,6 +5,10 @@
 <body>
   <h1>{{ stop_name }}</h1>
   <p>{{ direction }}</p>
-  trains
+  <ul>
+    {% for dept in departure_times %}
+      <li> {{ dept.route }} - {{ dept.time }} min</li>
+    {% endfor %}
+  </ul>
 </body>
 </html>
