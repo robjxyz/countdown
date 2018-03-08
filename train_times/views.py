@@ -83,15 +83,27 @@ def index(request):
     
     return render(request, 'index.html',context)
 
-def one_stop_with_id(request, stop_id):
-    if valid(stop_id):
-        stop_name, direction = get_station_info(stop_id)
-        departure_times = sorted(get_station_departures(stop_id), key=lambda d: d['time'])
-        return render(request, 'one_stop.html', {'stop_name': stop_name,
-                                                'direction': direction,
-                                                'departure_times': departure_times})
-    else:
+# def one_stop_with_id(request, stop_id):
+#     if valid(stop_id):
+#         stop_name, direction = get_station_info(stop_id)
+#         departure_times = sorted(get_station_departures(stop_id), key=lambda d: d['time'])
+#         return render(request, 'one_stop.html', {'stop_name': stop_name,
+#                                                 'direction': direction,
+#                                                 'departure_times': departure_times})
+#     else:
+#         return render(request, 'invalid_stop.html')
+
+def my_stops(request, stop_ids):
+    data = {}
+    stop_ids_list = stop_ids.split('-')
+    for stop_id in stop_ids_list:
+        if valid(stop_id):
+            stop_name, direction = get_station_info(stop_id)
+            data[stop_name] = sorted(get_station_departures(stop_id), key=lambda d: d['time'])
+            print(data)
+    if len(data) == 0:
         return render(request, 'invalid_stop.html')
+    return render(request, 'my_stops.html', data)
 
 def db(request):
 

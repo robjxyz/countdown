@@ -12,7 +12,8 @@ import train_times.views
 
 urlpatterns = [
     path('', train_times.views.index, name='index'),
-    path('<stop_id>/', train_times.views.one_stop_with_id, name='one_stop_with_id'),
+    # path('<stop_id>/', train_times.views.one_stop_with_id, name='one_stop_with_id'),
+    path('<stop_ids>/', train_times.views.my_stops, name='my_stops'),
 ]
 # urlpatterns = [
 #     url(r'^$', train_times.views.index, name='index'),
