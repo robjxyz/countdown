@@ -8,6 +8,16 @@ from train_times.lookup import get_station_info, get_station_departures, valid
 
 NYCTAPI = os.environ['NYCTAPI']
 
+def prettyTime(t):
+    if '-' in t: return '0 min'
+    h,m,s = t.split(':')
+    h = int(h)
+    m = int(m)
+    s = int(s)
+    if s>30: m += 1
+    m += 60*h
+    return '{0} min'.format(m)
+
 # Create your views here.
 def index(request):
     feed = FeedMessage()
@@ -16,35 +26,28 @@ def index(request):
     gtfs_raw_ACE = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=26").read()
     gtfs_raw_BDFM = urllib.request.urlopen("http://datamine.mta.info/mta_esi.php?key="+NYCTAPI+"&feed_id=21").read()
     feed.ParseFromString(gtfs_raw_Adiv)
-    def prettyTime(t):
-        if '-' in t: return '0 min'
-        h,m,s = t.split(':')
-        h = int(h)
-        m = int(m)
-        s = int(s)
-        if s>30: m += 1
-        m += 60*h
-        return '{0} min'.format(m)
+
     epkwy = []
     one145 = []
+    one148 = []
     for entity in feed.entity:
         if entity.trip_update.trip.route_id in ('2','3','4','5'):
             for stop_time_update in entity.trip_update.stop_time_update:
                 if stop_time_update.stop_id == '238N':
-                    #print str(stop_time_update.arrival)[6:-1]
                     epkwy.append((str(entity.trip_update.trip.route_id),str(datetime.datetime.fromtimestamp(int(str(stop_time_update.arrival)[6:-1]))-datetime.datetime.now()).split('.')[0]))
-        if entity.trip_update.trip.route_id == '1':
-            for stop_time_update in entity.trip_update.stop_time_update:
-                if stop_time_update.stop_id == '114S':
-                    one145.append((str(entity.trip_update.trip.route_id),str(datetime.datetime.fromtimestamp(int(str(stop_time_update.arrival)[6:-1]))-datetime.datetime.now()).split('.')[0]))
+                elif stop_time_update.stop_id == '301N':
+                    one148.append((str(entity.trip_update.trip.route_id),str(datetime.datetime.fromtimestamp(int(str(stop_time_update.arrival)[6:-1]))-datetime.datetime.now()).split('.')[0]))
     epkwy.sort(key=lambda tup: tup[1])
-    one145.sort(key=lambda tup: tup[1])
+    one148.sort(key=lambda tup: tup[1])
     context = {'epkwy':[]}
     context['one145']=[]
+    context['one148']=[]
     for arrival in epkwy:
         context['epkwy'].append( '({0}) {1}'.format(arrival[0],prettyTime(arrival[1])))
     for arrival in one145:
-        context['one145'].append( '({0}) {1}'.format(arrival[0],prettyTime(arrival[1])))    
+        context['one145'].append( '({0}) {1}'.format(arrival[0],prettyTime(arrival[1])))
+    for arrival in one148:
+        context['one148'].append( '({0}) {1}'.format(arrival[0],prettyTime(arrival[1])))
 
     #now do it for NWRQ for 7av
     feed.ParseFromString(gtfs_raw_NQRW)
